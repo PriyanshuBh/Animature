@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, MouseEvent } from "react";
+import { useEffect, useRef, useState} from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { useGSAP } from "@gsap/react";

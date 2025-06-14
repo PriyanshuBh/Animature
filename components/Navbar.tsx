@@ -11,7 +11,7 @@ import Button from "./Button";
 
 const navItems = ["Nexus", "Vault", "Prologue", "About", "Contact"];
 
-const NavBar = () => {
+const NavBar: React.FC = () => {
   const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
   const [isIndicatorActive, setIsIndicatorActive] = useState<boolean>(false);
   const [isNavVisible, setIsNavVisible] = useState<boolean>(true);
@@ -22,15 +22,20 @@ const NavBar = () => {
 
   const { y: currentScrollY } = useWindowScroll();
 
-  const toggleAudioIndicator = () => {
-    setIsAudioPlaying((prev) => !prev);
-    setIsIndicatorActive((prev) => !prev);
+  const toggleAudioIndicator = (): void => {
+    const next = !isAudioPlaying;
+    setIsAudioPlaying(next);
+    setIsIndicatorActive(next);
   };
 
   useEffect(() => {
     const audio = audioElementRef.current;
-    if (audio) {
+    if (!audio) return;
+
+    try {
       isAudioPlaying ? audio.play() : audio.pause();
+    } catch (error) {
+      console.warn("Audio playback failed:", error);
     }
   }, [isAudioPlaying]);
 
@@ -53,10 +58,14 @@ const NavBar = () => {
   }, [currentScrollY, lastScrollY]);
 
   useEffect(() => {
-    gsap.to(navContainerRef.current, {
+    const nav = navContainerRef.current;
+    if (!nav) return;
+
+    gsap.to(nav, {
       y: isNavVisible ? 0 : -100,
       opacity: isNavVisible ? 1 : 0,
       duration: 0.2,
+      ease: "power1.out",
     });
   }, [isNavVisible]);
 
@@ -67,9 +76,15 @@ const NavBar = () => {
     >
       <header className="absolute top-1/2 w-full -translate-y-1/2">
         <nav className="flex size-full items-center justify-between p-4">
-          {/* Logo and Products button */}
+          {/* Logo and Product Button */}
           <div className="flex items-center gap-7">
-            <Image src="/img/logo.png" alt="logo" className="w-10" width={40} height={40} />
+            <Image
+              src="/img/logo.png"
+              alt="logo"
+              className="w-10"
+              width={40}
+              height={40}
+            />
 
             <Button
               id="product-button"
@@ -79,10 +94,10 @@ const NavBar = () => {
             />
           </div>
 
-          {/* Navigation and Audio */}
+          {/* Navigation Links and Audio Toggle */}
           <div className="flex h-full items-center">
             <div className="hidden md:block">
-              {navItems.map((item) => (
+              {navItems.map((item: string) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
@@ -95,6 +110,8 @@ const NavBar = () => {
 
             <button
               onClick={toggleAudioIndicator}
+              tabIndex={0}
+              aria-label="Toggle background audio"
               className="ml-10 flex items-center space-x-0.5"
             >
               <audio
@@ -103,7 +120,7 @@ const NavBar = () => {
                 src="/audio/loop.mp3"
                 loop
               />
-              {[1, 2, 3, 4].map((bar) => (
+              {[1, 2, 3, 4].map((bar: number) => (
                 <div
                   key={bar}
                   className={clsx("indicator-line", {
