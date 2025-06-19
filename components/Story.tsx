@@ -1,17 +1,18 @@
-"use client"
+"use client";
+
 import gsap from "gsap";
 import { useRef } from "react";
+import Image from "next/image";
 
 import Button from "./Button";
 import AnimatedTitle from "./AnimatedTitle";
 
 const FloatingImage = () => {
-  const frameRef = useRef<any | null>(null);
+  const frameRef = useRef<HTMLDivElement | null>(null);
 
-  const handleMouseMove = (e:any) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { clientX, clientY } = e;
     const element = frameRef.current;
-
     if (!element) return;
 
     const rect = element.getBoundingClientRect();
@@ -35,15 +36,14 @@ const FloatingImage = () => {
 
   const handleMouseLeave = () => {
     const element = frameRef.current;
+    if (!element) return;
 
-    if (element) {
-      gsap.to(element, {
-        duration: 0.3,
-        rotateX: 0,
-        rotateY: 0,
-        ease: "power1.inOut",
-      });
-    }
+    gsap.to(element, {
+      duration: 0.3,
+      rotateX: 0,
+      rotateY: 0,
+      ease: "power1.inOut",
+    });
   };
 
   return (
@@ -61,21 +61,24 @@ const FloatingImage = () => {
 
           <div className="story-img-container">
             <div className="story-img-mask">
-              <div className="story-img-content">
-                <img
-                  ref={frameRef}
-                  onMouseMove={handleMouseMove}
-                  onMouseLeave={handleMouseLeave}
-                  onMouseUp={handleMouseLeave}
-                  onMouseEnter={handleMouseLeave}
+              <div
+                ref={frameRef}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                onMouseUp={handleMouseLeave}
+                onMouseEnter={handleMouseLeave}
+                className="story-img-content"
+              >
+                <Image
                   src="/img/entrance.webp"
-                  alt="entrance.webp"
+                  alt="Entrance to the hidden realm"
                   className="object-contain"
+                  fill
                 />
               </div>
             </div>
 
-            {/* for the rounded corner */}
+            {/* For rounded corner effect */}
             <svg
               className="invisible absolute size-0"
               xmlns="http://www.w3.org/2000/svg"

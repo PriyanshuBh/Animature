@@ -1,7 +1,8 @@
+"use client";
 
-"use client"
 import clsx from "clsx";
 import gsap from "gsap";
+import Image from "next/image";
 import { useWindowScroll } from "react-use";
 import { useEffect, useRef, useState } from "react";
 import { TiLocationArrow } from "react-icons/ti";
@@ -11,46 +12,41 @@ import Button from "./Button";
 const navItems = ["Nexus", "Vault", "Prologue", "About", "Contact"];
 
 const NavBar = () => {
-  // State for toggling audio and visual indicator
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
-  const [isIndicatorActive, setIsIndicatorActive] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
+  const [isIndicatorActive, setIsIndicatorActive] = useState<boolean>(false);
+  const [isNavVisible, setIsNavVisible] = useState<boolean>(true);
+  const [lastScrollY, setLastScrollY] = useState<number>(0);
 
-  // Refs for audio and navigation container
-  const audioElementRef = useRef<HTMLVideoElement | null>(null);
-  const navContainerRef = useRef<any | null>(null);
+  const audioElementRef = useRef<HTMLAudioElement | null>(null);
+  const navContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { y: currentScrollY } = useWindowScroll();
-  const [isNavVisible, setIsNavVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Toggle audio and visual indicator
   const toggleAudioIndicator = () => {
     setIsAudioPlaying((prev) => !prev);
     setIsIndicatorActive((prev) => !prev);
   };
 
-  // Manage audio playback
   useEffect(() => {
-    if (isAudioPlaying) {
-      audioElementRef.current?.play();
-    } else {
-      audioElementRef.current?.pause();
+    const audio = audioElementRef.current;
+    if (audio) {
+      isAudioPlaying ? audio.play() : audio.pause();
     }
   }, [isAudioPlaying]);
 
   useEffect(() => {
+    const nav = navContainerRef.current;
+    if (!nav) return;
+
     if (currentScrollY === 0) {
-      // Topmost position: show navbar without floating-nav
       setIsNavVisible(true);
-      navContainerRef.current?.classList.remove("floating-nav");
+      nav.classList.remove("floating-nav");
     } else if (currentScrollY > lastScrollY) {
-      // Scrolling down: hide navbar and apply floating-nav
       setIsNavVisible(false);
-      navContainerRef.current?.classList.add("floating-nav");
+      nav.classList.add("floating-nav");
     } else if (currentScrollY < lastScrollY) {
-      // Scrolling up: show navbar with floating-nav
       setIsNavVisible(true);
-      navContainerRef.current?.classList.add("floating-nav");
+      nav.classList.add("floating-nav");
     }
 
     setLastScrollY(currentScrollY);
@@ -71,9 +67,9 @@ const NavBar = () => {
     >
       <header className="absolute top-1/2 w-full -translate-y-1/2">
         <nav className="flex size-full items-center justify-between p-4">
-          {/* Logo and Product button */}
+          {/* Logo and Products button */}
           <div className="flex items-center gap-7">
-            <img src="/img/logo.png" alt="logo" className="w-10" />
+            <Image src="/img/logo.png" alt="logo" className="w-10" width={40} height={40} />
 
             <Button
               id="product-button"
@@ -83,12 +79,12 @@ const NavBar = () => {
             />
           </div>
 
-          {/* Navigation Links and Audio Button */}
+          {/* Navigation and Audio */}
           <div className="flex h-full items-center">
             <div className="hidden md:block">
-              {navItems.map((item, index) => (
+              {navItems.map((item) => (
                 <a
-                  key={index}
+                  key={item}
                   href={`#${item.toLowerCase()}`}
                   className="nav-hover-btn"
                 >

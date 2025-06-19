@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
+import { useEffect, useRef, useState, MouseEvent } from "react";
 import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
+import { useGSAP } from "@gsap/react";
 import { TiLocationArrow } from "react-icons/ti";
-import { useEffect, useRef, useState } from "react";
 
 import Button from "./Button";
 import VideoPreview from "./VideoPreview";
@@ -12,11 +12,10 @@ import VideoPreview from "./VideoPreview";
 gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
-  const [currentIndex, setCurrentIndex] = useState(1);
-  const [hasClicked, setHasClicked] = useState(false);
-
-  const [loading, setLoading] = useState(true);
-  const [loadedVideos, setLoadedVideos] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(1);
+  const [hasClicked, setHasClicked] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [loadedVideos, setLoadedVideos] = useState<number>(0);
 
   const totalVideos = 4;
   const nextVdRef = useRef<HTMLVideoElement | null>(null);
@@ -26,15 +25,15 @@ const Hero = () => {
   };
 
   useEffect(() => {
-    if (loadedVideos === totalVideos - 1) {
-      setLoading(false);
-    }
+    // if (loadedVideos === totalVideos - 1) {
+    //   setLoading(false);
+    // }
+    setLoading(false);
   }, [loadedVideos]);
 
   const handleMiniVdClick = () => {
     setHasClicked(true);
-
-    setCurrentIndex((prevIndex) => (prevIndex % totalVideos) + 1);
+    setCurrentIndex((prev) => (prev % totalVideos) + 1);
   };
 
   useGSAP(
@@ -48,12 +47,11 @@ const Hero = () => {
           height: "100%",
           duration: 1,
           ease: "power1.inOut",
-          onStart:  () => {
-            if (nextVdRef.current) {
-                nextVdRef.current.play();
-            }
-        },
+          onStart: () => {
+            nextVdRef.current?.play();
+          },
         });
+
         gsap.from("#current-video", {
           transformOrigin: "center center",
           scale: 0,
@@ -62,10 +60,7 @@ const Hero = () => {
         });
       }
     },
-    {
-      dependencies: [currentIndex],
-      revertOnUpdate: true,
-    }
+    { dependencies: [currentIndex], revertOnUpdate: true }
   );
 
   useGSAP(() => {
@@ -86,13 +81,12 @@ const Hero = () => {
     });
   });
 
-  const getVideoSrc = (index: any) => `videos/hero-${index}.mp4`;
+  const getVideoSrc = (index: number) => `videos/hero-${index}.mp4`;
 
   return (
     <div className="relative h-dvh w-screen overflow-x-hidden">
       {loading && (
         <div className="flex-center absolute z-[100] h-dvh w-screen overflow-hidden bg-violet-50">
-          {/* https://uiverse.io/G4b413l/tidy-walrus-92 */}
           <div className="three-body">
             <div className="three-body__dot"></div>
             <div className="three-body__dot"></div>
@@ -134,10 +128,9 @@ const Hero = () => {
             className="absolute-center invisible absolute z-20 size-64 object-cover object-center"
             onLoadedData={handleVideoLoad}
           />
+
           <video
-            src={getVideoSrc(
-              currentIndex === totalVideos - 1 ? 1 : currentIndex
-            )}
+            src={getVideoSrc(currentIndex === totalVideos - 1 ? 1 : currentIndex)}
             autoPlay
             loop
             muted
@@ -155,11 +148,10 @@ const Hero = () => {
             <h1 className="special-font hero-heading text-blue-100">
               redefi<b>n</b>e
             </h1>
-
             <p className="mb-5 max-w-64 font-robert-regular text-blue-100">
-              Enter the Metagame Layer <br /> Unleash the Play Economy
+              Enter the Metagame Layer <br />
+              Unleash the Play Economy
             </p>
-
             <Button
               id="watch-trailer"
               title="Watch trailer"
